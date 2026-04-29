@@ -1,0 +1,10 @@
+# AUR build artifacts
+pkg/
+src/
+
+# Downloaded source tarballs
+*.tar.gz
+*.tar.zst
+
+# Built package files
+*.pkg.tar.zst
