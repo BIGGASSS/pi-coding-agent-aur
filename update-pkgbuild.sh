@@ -99,4 +99,32 @@ echo "     pkgver: $curver -> $newver"
 echo "     sha256sums_x86_64:  ${sums[x86_64]}"
 echo "     sha256sums_aarch64: ${sums[aarch64]}"
 echo ""
+
+# --- 5. Commit and push to remote -----------------------------------
+cd "$(dirname "$0")"
+
+if git rev-parse --git-dir >/dev/null 2>&1; then
+    echo ":: Committing and pushing to remote …"
+
+    git add .
+
+    # Only commit if there are actual changes staged
+    if git diff --cached --quiet; then
+        echo "   No changes to commit."
+    else
+        git commit -m "Update to v$newver"
+
+        if git remote -v | grep -q .; then
+            current_branch="$(git rev-parse --abbrev-ref HEAD)"
+            git push origin "$current_branch"
+            echo "   Pushed to origin/$current_branch"
+        else
+            echo "   No remote configured — skipping push."
+        fi
+    fi
+else
+    echo "   Not inside a git repository — skipping commit and push."
+fi
+
+echo ""
 echo "   Run 'makepkg -si' to build and install."
