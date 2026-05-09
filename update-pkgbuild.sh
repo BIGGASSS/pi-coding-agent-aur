@@ -12,7 +12,7 @@ set -euo pipefail
 # ------------------------------------------------------------------
 
 PKGBUILD="$(dirname "$0")/PKGBUILD"
-REPO="badlogic/pi-mono"
+REPO="earendil-works/pi"
 
 # --- Helper: print error and exit -----------------------------------
 die() {
