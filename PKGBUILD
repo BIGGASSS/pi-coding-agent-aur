@@ -1,5 +1,5 @@
 pkgname=pi-coding-agent-aur
-pkgver=0.75.5
+pkgver=0.77.0
 pkgrel=1
 pkgdesc='A terminal-based coding agent with multi-model support, mid-session model switching, and a simple CLI for headless coding tasks'
 arch=('x86_64' 'aarch64')
@@ -8,9 +8,9 @@ license=('MIT')
 options=(!debug !strip)
 
 source_x86_64=("pi-linux-$pkgver.tar.gz::https://github.com/earendil-works/pi/releases/download/v$pkgver/pi-linux-x64.tar.gz")
-sha256sums_x86_64=("ac687acd72705dabe967fd40d365317f68054878be1cb2c0ae9a0592fd108b5d")
+sha256sums_x86_64=("e75031cdabc690b43f4d134fdaa6a4d693038d1a13b2cfa705c4c706dfef81c5")
 source_aarch64=("pi-linux-$pkgver.tar.gz::https://github.com/earendil-works/pi/releases/download/v$pkgver/pi-linux-arm64.tar.gz")
-sha256sums_aarch64=("8b5c66fc3baee5fea4077f62307f792d6293660315b3ce4d0940c49353b45f50")
+sha256sums_aarch64=("d8d145d89a95d4919369332b3009951473daafa538c7b6ffa1dcae106bf0e3e9")
 noextract=("pi-linux-$pkgver.tar.gz")
 
 makedepends=("tar")
