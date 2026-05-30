@@ -11,13 +11,38 @@ set -euo pipefail
 # Usage:  ./update-pkgbuild.sh
 # ------------------------------------------------------------------
 
-PKGBUILD="$(dirname "$0")/PKGBUILD"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PKGBUILD="$SCRIPT_DIR/PKGBUILD"
 REPO="earendil-works/pi"
+PKGNAME="pi-coding-agent-aur"
 
 # --- Helper: print error and exit -----------------------------------
 die() {
     echo "::error:: $*" >&2
     exit 1
+}
+
+# --- Helper: remove local makepkg artifacts -------------------------
+cleanup_build_artifacts() {
+    local artifacts=()
+    local dir
+
+    for dir in "$SCRIPT_DIR/pkg" "$SCRIPT_DIR/src"; do
+        [[ -e "$dir" || -L "$dir" ]] && artifacts+=("$dir")
+    done
+
+    shopt -s nullglob
+    artifacts+=(
+        "$SCRIPT_DIR/"*.tar.zst
+        "$SCRIPT_DIR/pi-linux-"*.tar.gz
+        "$SCRIPT_DIR/$PKGNAME"-*.pkg.tar.zst
+    )
+    shopt -u nullglob
+
+    if ((${#artifacts[@]})); then
+        echo ":: Cleaning local build artifacts …"
+        rm -rf -- "${artifacts[@]}"
+    fi
 }
 
 # --- 1. Fetch latest release tag from GitHub ------------------------
@@ -38,6 +63,7 @@ echo "   Current version: $curver"
 
 if [[ "$newver" == "$curver" ]]; then
     echo "   Already up-to-date. Nothing to do."
+    cleanup_build_artifacts
     exit 0
 fi
 
@@ -91,6 +117,7 @@ awk -v newver="$newver" \
 ' "$PKGBUILD" > "$tmpdir/PKGBUILD.new"
 
 mv "$tmpdir/PKGBUILD.new" "$PKGBUILD"
+cleanup_build_artifacts
 
 echo ":: Done! Updated to version $newver"
 echo ""
@@ -101,7 +128,7 @@ echo "     sha256sums_aarch64: ${sums[aarch64]}"
 echo ""
 
 # --- 5. Commit and push to remote -----------------------------------
-cd "$(dirname "$0")"
+cd "$SCRIPT_DIR"
 
 if git rev-parse --git-dir >/dev/null 2>&1; then
     echo ":: Committing and pushing to remote …"
